@@ -5,22 +5,21 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Serve static files from 'public' folder
+// Serve static files from 'public'
 app.use(express.static('public'));
 
-// Optional: explicit route to index.html
+// Ensure '/' serves index.html
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Endpoint to fetch images from your pCloud public URL
+// Endpoint to fetch images from pCloud
 app.get('/images', async (req, res) => {
   try {
     const html = await fetch(
       'https://u.pcloud.link/publink/show?code=kZyStj5ZOYjg7eRulDVOoV9FzH625QdSmkok'
     ).then(r => r.text());
 
-    // Extract all <img src="..."> URLs
     const imgRegex = /<img [^>]*src="([^"]+)"/g;
     const imgs = [];
     let match;
@@ -28,7 +27,7 @@ app.get('/images', async (req, res) => {
       imgs.push(match[1]);
     }
 
-    // Send array of image URLs to browser
+    // Return images as JSON
     res.json(imgs);
   } catch (err) {
     console.error(err);
