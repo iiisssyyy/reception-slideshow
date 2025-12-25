@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const app = express();
 const PORT = 3000;
 
+
 // Serve static files (HTML, CSS, JS)
 app.use(express.static('public'));
 
