@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Serve static files from 'public'
+// Serve static files from 'public' folder
 app.use(express.static('public'));
 
 // Ensure '/' serves index.html
@@ -35,7 +35,7 @@ app.get('/images', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start server and listen on all interfaces for Codespaces
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
