@@ -1,41 +1,44 @@
-// server.js
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
-const app = express();
-const PORT = 3000;
 
-// Serve static files from 'public' folder
+const app = express();
+
+// IMPORTANT: use the port GitHub provides
+const PORT = process.env.PORT || 3000;
+
+// Serve static files
 app.use(express.static('public'));
 
-// Ensure '/' serves index.html
+// Explicit root handler
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Endpoint to fetch images from pCloud
+// Image scraping endpoint
 app.get('/images', async (req, res) => {
   try {
-    const html = await fetch(
+    const response = await fetch(
       'https://u.pcloud.link/publink/show?code=kZyStj5ZOYjg7eRulDVOoV9FzH625QdSmkok'
-    ).then(r => r.text());
+    );
+    const html = await response.text();
 
-    const imgRegex = /<img [^>]*src="([^"]+)"/g;
-    const imgs = [];
+    const imgRegex = /<img[^>]+src="([^"]+)"/g;
+    const images = [];
     let match;
+
     while ((match = imgRegex.exec(html))) {
-      imgs.push(match[1]);
+      images.push(match[1]);
     }
 
-    // Return images as JSON
-    res.json(imgs);
+    res.json(images);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error fetching images');
+    res.status(500).send('Failed to fetch images');
   }
 });
 
-// Start server and listen on all interfaces for Codespaces
+// LISTEN ON ALL INTERFACES + CORRECT PORT
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
